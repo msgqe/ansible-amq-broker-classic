@@ -18,6 +18,8 @@
     - instance
   shell: "{{ amq_broker_classic_install_dest }}/instances/{{ item.name }}/bin/{{ item.name }} stop"
   ignore_errors: true
+  become: true
+  become_user: "{{ amq_broker_classic_user }}"
   with_items: "{{ amq_broker_classic_instances }}"
 
 - name: Remove Broker instances
@@ -69,5 +71,7 @@
   shell: "{{ amq_broker_classic_install_dest }}/instances/{{ item.name }}/bin/{{ item.name }} start"
   register: create_cmd2_status
   failed_when: create_cmd2_status.rc >= 2
+  become: true
+  become_user: "{{ amq_broker_classic_user }}"
   with_items: "{{ amq_broker_classic_instances }}"
 
