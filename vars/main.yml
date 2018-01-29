@@ -1,0 +1,9 @@
+---
+# vars file for ansible-amq-broker-classic
+amq_broker_classic_default_port_amqp: 5672
+amq_broker_classic_default_port_mqtt: 1883
+amq_broker_classic_default_port_stomp: 61613
+amq_broker_classic_default_port_openwire: 61616
+amq_broker_classic_default_port_ws: 61614
+
+amq_broker_classic_dependencies: wget, unzip, tar

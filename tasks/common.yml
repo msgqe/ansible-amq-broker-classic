@@ -1,0 +1,120 @@
+- name: Ensure that broker dependencies are installed (RPM-based)
+  when:
+    - ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat' or ansible_distribution == 'Fedora'
+  package: name="{{ amq_broker_classic_dependencies }}" state=present
+
+- name: Download broker
+  tags:
+    - broker
+    - download
+  get_url:
+    url: "{{ amq_broker_classic_download_url }}"
+    dest: "{{ amq_broker_classic_download_dest }}/{{ amq_broker_classic_download_url | basename}}"
+    force: no
+  register: dist_get
+
+- name: Create user
+  tags:
+    - broker
+    - user
+  shell: id {{ amq_broker_classic_user }} || (useradd -m -U {{ amq_broker_classic_user }}  )
+
+- name: Unzip downloaded distribution to {{ amq_broker_classic_install_dest }}
+  unarchive:
+    src: "{{ amq_broker_classic_download_dest }}/{{ amq_broker_classic_download_url | basename }}"
+    dest: "{{ amq_broker_classic_install_dest }}/"
+    remote_src: True
+    list_files: yes
+  register: archive_contents
+
+- debug: msg="Latest broker directory created is {{ archive_contents.files[0] | dirname }}"
+  tags:
+  - broker
+  - link
+
+- name: "Create link to install dir {{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}"
+  tags:
+    - broker
+    - link
+  file:
+    src: "{{ amq_broker_classic_install_dest }}/{{ archive_contents.files[0] | dirname }}"
+    dest: "{{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}"
+    state: link
+    mode: 0755
+    force: true
+
+
+- name: "Configure Maestro Broker instances: admin port"
+  tags:
+    - maestro
+    - broker
+    - instance
+  iptables:
+    chain: INPUT
+    source_port: "{{ item.ports.admin }}"
+    protocol: "tcp"
+    jump: "ACCEPT"
+    state: "present"
+  with_items:
+    - "{{ amq_broker_classic_instances }}"
+
+- name: "Configure firewall: mqtt"
+  tags:
+    - broker
+    - instance
+  iptables:
+    chain: INPUT
+    source_port: "{{ item.ports.mqtt }}"
+    protocol: "tcp"
+    jump: "ACCEPT"
+    state: "present"
+  with_items:
+    - "{{ amq_broker_classic_instances }}"
+
+- name: "Configure firewall: amqp"
+  tags:
+    - broker
+    - instance
+  iptables:
+    chain: INPUT
+    source_port: "{{ item.ports.amqp }}"
+    protocol: "tcp"
+    jump: "ACCEPT"
+    state: "present"
+  with_items:
+    - "{{ amq_broker_classic_instances }}"
+
+
+- name: "Configure firewall: stomp"
+  tags:
+    - broker
+    - instance
+  iptables:
+    chain: INPUT
+    source_port: "{{ item.ports.stomp }}"
+    protocol: "tcp"
+    jump: "ACCEPT"
+    state: "present"
+  with_items:
+    - "{{ amq_broker_classic_instances }}"
+
+
+- name: "Configure firewall: openwire"
+  tags:
+    - broker
+    - instance
+  iptables:
+    chain: INPUT
+    source_port: "{{ item.ports.openwire }}"
+    protocol: "tcp"
+    jump: "ACCEPT"
+    state: "present"
+  with_items:
+    - "{{ amq_broker_classic_instances }}"
+
+- name: Ensure correct ownership
+  tags:
+    - maestro
+    - ownership
+  shell: chown -R "{{ amq_broker_classic_user }}":"{{ amq_broker_classic_user }}" "{{ amq_broker_classic_install_dest }}"
+

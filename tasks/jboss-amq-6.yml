@@ -1,0 +1,13 @@
+- name: Stop Broker instances
+  tags:
+    - broker
+    - instance
+  shell: "{{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}/bin/stop"
+  ignore_errors: true
+
+- name: Start Broker instances
+  tags:
+    - broker
+    - instance
+  shell: "{{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}/bin/start"
+  ignore_errors: true

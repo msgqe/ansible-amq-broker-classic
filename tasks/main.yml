@@ -1,0 +1,30 @@
+---
+# tasks file for ansible-amq-broker-classic
+- name: Find classic broker type by name
+  vars:
+    amq_broker_classic_type_info: "{{ amq_broker_classic_download_url | regex_search('apache-activemq') }}"
+  debug:
+    msg: "{{ amq_broker_classic_type_info }}"
+  register: amq_broker_classic_type
+
+- include: common.yml
+
+- name: "Execute upstream broker automation {{ amq_broker_classic_type }}"
+  when:
+    - amq_broker_classic_type is defined and amq_broker_classic_type.msg == 'apache-activemq'
+  debug:
+    msg: "Deploying classic upstream broker"
+
+- include: classic.yml
+  when:
+    - amq_broker_classic_type is defined and amq_broker_classic_type.msg == 'apache-activemq'
+
+- name: "Execute JBoss A-MQ 6 broker automation {{ amq_broker_classic_type.msg }}"
+  when:
+    - amq_broker_classic_type is defined and amq_broker_classic_type.msg != 'apache-activemq'
+  debug:
+    msg: "Deploying classic downstream broker"
+
+- include: jboss-amq-6.yml
+  when:
+    - amq_broker_classic_type is defined and amq_broker_classic_type.msg != 'apache-activemq'

@@ -1,0 +1,9 @@
+---
+# defaults file for ansible-amq-broker-classic
+amq_broker_classic_download_url: "{{ lookup('env','AMQ_BROKER_CLASSIC_DOWNLOAD_URL') | default('https://archive.apache.org/dist/activemq/5.11.3/apache-activemq-5.11.3-bin.tar.gz', true) }}"
+amq_broker_classic_download_dest: /tmp
+amq_broker_classic_user: broker
+amq_broker_classic_install_dest: "/home/{{ amq_broker_classic_user }}"
+amq_broker_classic_install_link: broker-classic
+amq_broker_classic_instances: [ { name: "broker-classic-1", ports: { admin: "8161", mqtt: "1883", amqp: "5672", stomp: "61613", openwire: "61616", ws: "61614" } } ]
+amq_broker_classic_max_connections: 1000
