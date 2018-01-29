@@ -1,5 +1,5 @@
 TEST_INVENTORY?=tests/inventory
-ANSIBLE_OPTS?=""
+ANSIBLE_OPTS?=
 containers = cnt-centos6 cnt-centos7
 
 clean:
