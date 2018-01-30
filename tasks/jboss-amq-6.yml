@@ -24,8 +24,16 @@
 
 - name: Install management console user profile
   template:
-    src: templates/users.properties.j2
+    src: templates/downstream/users.properties.j2
     dest: "{{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}/etc/users.properties"
+    owner: "{{ amq_broker_classic_user }}"
+    group: "{{ amq_broker_classic_user }}"
+    mode: 0755
+
+- name: Install basic passwordless configuration
+  template:
+    src: templates/downstream/activemq.xml.j2
+    dest: "{{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}/etc/activemq.xml"
     owner: "{{ amq_broker_classic_user }}"
     group: "{{ amq_broker_classic_user }}"
     mode: 0755

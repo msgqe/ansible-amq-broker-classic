@@ -45,9 +45,11 @@
     - broker
     - instance
   template:
-    src: templates/activemq.xml.j2
+    src: templates/upstream/activemq.xml.j2
     dest: "{{ amq_broker_classic_install_dest }}/instances/{{ item.name }}/conf/activemq.xml"
     mode: 0755
+    owner: "{{ amq_broker_classic_user }}"
+    group: "{{ amq_broker_classic_user }}"
   with_items:
     - "{{ amq_broker_classic_instances }}"
 
@@ -57,9 +59,11 @@
     - broker
     - instance
   template:
-    src: templates/jetty.xml.j2
+    src: templates/upstream/jetty.xml.j2
     dest: "{{ amq_broker_classic_install_dest }}/instances/{{ item.name }}/conf/jetty.xml"
     mode: 0755
+    owner: "{{ amq_broker_classic_user }}"
+    group: "{{ amq_broker_classic_user }}"
   with_items:
     - "{{ amq_broker_classic_instances }}"
 
