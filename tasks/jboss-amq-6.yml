@@ -34,7 +34,7 @@
   tags:
     - broker
     - instance
-  command: "{{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}/bin/start"
+  shell: "nohup {{ amq_broker_classic_install_dest }}/{{ amq_broker_classic_install_link }}/bin/start &"
   become: true
   become_user: "{{ amq_broker_classic_user }}"
   ignore_errors: true
